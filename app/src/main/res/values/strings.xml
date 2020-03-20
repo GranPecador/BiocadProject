@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BiocadProject</string>
+    <string name="title_activity_main">Параметры</string>
+    <string name="title_data">Данные</string>
+    <string name="title_critical_parameters">Критические параметры</string>
+    <string name="title_analytics">Анализ</string>
+</resources>
