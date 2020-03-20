@@ -8,8 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
-import com.lk.biocadproject.ParametersModel
 import com.lk.biocadproject.R
 
 class HomeFragment : Fragment() {

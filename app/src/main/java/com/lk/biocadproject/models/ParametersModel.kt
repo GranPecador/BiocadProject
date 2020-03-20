@@ -1,4 +1,4 @@
-package com.lk.biocadproject
+package com.lk.biocadproject.models
 
 data class ParametersModel (var pressure:Float,
                             var humidity:Float,     // влажность измеряется от 0 до 100%

@@ -3,7 +3,7 @@ package com.lk.biocadproject.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.lk.biocadproject.ParametersModel
+import com.lk.biocadproject.models.ParametersModel
 
 class HomeViewModel : ViewModel() {
 
@@ -13,7 +13,16 @@ class HomeViewModel : ViewModel() {
     val text: LiveData<String> = _text
     private val _parameters= MutableLiveData<ParametersModel>().apply {
         if (this.value == null){
-            this.value = ParametersModel(0F,0F,0F,0F,0F,0F,0F,0F)
+            this.value = ParametersModel(
+                0F,
+                0F,
+                0F,
+                0F,
+                0F,
+                0F,
+                0F,
+                0F
+            )
         }
 //        this.value?.let {
 //            it.pressure = 0F
