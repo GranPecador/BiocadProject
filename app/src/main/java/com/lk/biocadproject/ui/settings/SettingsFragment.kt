@@ -12,7 +12,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
 import com.lk.biocadproject.R
-import com.lk.biocadproject.api.MinMaxModelApi
 
 class SettingsFragment : Fragment() {
 

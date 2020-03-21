@@ -12,12 +12,7 @@ import okhttp3.WebSocketListener
 
 class HomeViewModel : ViewModel() {
 
-    // Create a WebSocket factory and set 5000 milliseconds as a timeout
-// value for socket connection.
-    var factory = WebSocketFactory().setConnectionTimeout(5000)
 
-    // Create a WebSocket. The timeout value set above is used.
-    var ws: WebSocket = factory.createSocket("ws://192.168.1.109:8080/")
 
     val socketUrl = "ws://192.168.1.109:8080/"
 

@@ -66,6 +66,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.4.0")
     implementation 'com.neovisionaries:nv-websocket-client:2.9'
 
+    // linear grafics and bar charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     testImplementation 'junit:junit:4.12'

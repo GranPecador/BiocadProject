@@ -13,4 +13,9 @@ interface JSONPlaceHolderApi {
 
     @POST("/critical")
     suspend fun postNewParameter(@Body param: ParameterCharacteristic)
+
+    @GET("/period")
+    suspend fun getDataPeriod(@Query("paramName") name:String,
+                              @Query("dateStart") start:String,
+                              @Query("dateEnd") end:String)
 }
