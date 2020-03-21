@@ -6,14 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import com.google.android.material.button.MaterialButton
 
 import com.lk.biocadproject.R
 
 class SettingsFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = SettingsFragment()
-    }
 
     private lateinit var viewModel: SettingsViewModel
 
@@ -21,13 +21,18 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        viewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        val adapter: ArrayAdapter<String> = ArrayAdapter(context!!, R.layout.dropdown_menu_popup_item, viewModel.PARAMETRES)
+        val dropdownMenu = root.findViewById<AutoCompleteTextView>(R.id.exposed_dropdown)
+        dropdownMenu.setAdapter(adapter)
+
+
+
+        val settingsChangeButton = root.findViewById<MaterialButton>(R.id.button_send_new_setting)
+        return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
 
 }

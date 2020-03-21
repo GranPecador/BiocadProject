@@ -22,4 +22,10 @@
         android:name="com.lk.biocadproject.ui.notifications.NotificationsFragment"
         android:label="@string/title_analytics"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.lk.biocadproject.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings"/>
 </navigation>

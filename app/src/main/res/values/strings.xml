@@ -3,5 +3,7 @@
     <string name="title_activity_main">Параметры</string>
     <string name="title_data">Данные</string>
     <string name="title_critical_parameters">Анализ</string>
-    <string name="title_analytics">Критически</string>
+    <string name="title_analytics">Превышения</string>
+    <string name="title_settings">Настройка</string>
+
 </resources>
