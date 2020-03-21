@@ -4,8 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lk.biocadproject.models.ParametersModel
+import com.neovisionaries.ws.client.WebSocket
+import com.neovisionaries.ws.client.WebSocketFactory
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocketListener
 
 class HomeViewModel : ViewModel() {
+
+    // Create a WebSocket factory and set 5000 milliseconds as a timeout
+// value for socket connection.
+    var factory = WebSocketFactory().setConnectionTimeout(5000)
+
+    // Create a WebSocket. The timeout value set above is used.
+    var ws: WebSocket = factory.createSocket("ws://192.168.1.109:8080/")
+
+    val socketUrl = "ws://192.168.1.109:8080/"
 
     private val _text = MutableLiveData<String>().apply {
         value = "Текущие параметры"
@@ -36,4 +50,6 @@ class HomeViewModel : ViewModel() {
 
     }
     val parameters: LiveData<ParametersModel> = _parameters
+
+
 }

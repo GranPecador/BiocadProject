@@ -1,6 +1,7 @@
 package com.lk.biocadproject.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.lk.biocadproject.R
+import com.lk.biocadproject.websocket.WebsocketCLient
+import com.neovisionaries.ws.client.WebSocket
+import com.neovisionaries.ws.client.WebSocketAdapter
 
 class HomeFragment : Fragment() {
 
@@ -44,6 +48,16 @@ class HomeFragment : Fragment() {
             fluidFlowTextVIew.text = "Расход жидкости: ${it.fluidFlow} л"
             levelCO2TextVIew.text = "Уровень CO: ${it.levelCO2} PPM"
         })
+        getParams()
         return root
+    }
+
+    private fun getParams(){
+        homeViewModel.ws.addListener(object: WebSocketAdapter(){
+            override fun onTextMessage(websocket: WebSocket?, text: String?) {
+                super.onTextMessage(websocket, text)
+                Log.e("TAG", text)
+            }
+        })
     }
 }
