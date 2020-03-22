@@ -36,7 +36,7 @@
                 android:layout_weight="1"
                 android:text="Начало периода:"
                 android:textAlignment="center"
-                android:textSize="17sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/start_of_period_edittext"
@@ -44,7 +44,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:ems="10"
-                android:text="Выберите дату" />
+                android:text="Выберите дату"
+                android:textSize="18sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -55,18 +56,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Конец периода:"
                 android:textAlignment="center"
-                android:textSize="17sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/end_of_period_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
                 android:ems="10"
-                android:hint="Выберите дату" />
+                android:hint="Выберите дату"
+                android:textSize="18sp"/>
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

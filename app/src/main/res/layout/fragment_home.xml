@@ -37,7 +37,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
-        
+        android:layout_gravity="center"
+
         />
 </LinearLayout>
     <LinearLayout
@@ -60,6 +61,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
+        android:layout_gravity="center"
+
         />
     </LinearLayout>
     <LinearLayout
@@ -82,6 +85,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
+        android:layout_gravity="center"
+
         />
     </LinearLayout>
     <LinearLayout
@@ -104,6 +109,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
+        android:layout_gravity="center"
+
         />
     </LinearLayout>
     <LinearLayout
@@ -126,6 +133,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
+        android:layout_gravity="center"
+
         />
     </LinearLayout>
     <LinearLayout
@@ -148,6 +157,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
+        android:layout_gravity="center"
+
         />
     </LinearLayout>
     <LinearLayout
@@ -170,6 +181,8 @@ android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="18sp"
+        android:layout_gravity="center"
+
         />
     </LinearLayout>
     <LinearLayout
@@ -191,6 +204,8 @@ android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        />
     </LinearLayout>
 </LinearLayout>

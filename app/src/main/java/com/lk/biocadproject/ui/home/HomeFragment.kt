@@ -104,7 +104,6 @@ class HomeFragment : Fragment() {
 
         override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            webSocket.send("Hello, it's cheerful")
             Log.e("TAG", text)
             try {
                 val obj = JSONObject(text)
@@ -146,5 +145,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+
     }
 }
