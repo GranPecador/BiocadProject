@@ -92,6 +92,23 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Данные за сегодня"
+                android:textSize="16sp"
+                />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/param_linechart"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="10dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -17,7 +17,9 @@ interface JSONPlaceHolderApi {
     @GET("/maindata")
     suspend fun getMinMaxAvarage(@Query("paramName") name: String,
                                  @Query("dateStart") start:String,
-                                 @Query("dateEnd") end:String,
-                                 @Query("timeStart") startTime:String,
-                                 @Query("timeEnd") timeEnd: String) : MinMaxAverageModelApi
+                                 @Query("dateEnd") end:String) : MinMaxAverageModelApi
+
+    @GET("/hourly")
+    suspend fun getAvarage(@Query("param") name:String,
+                           @Query("dateStart") dateStart:String): ParamListAvarageModelApi
 }

@@ -35,7 +35,7 @@ class SettingsFragment : Fragment() {
         dropdownMenu.setAdapter(adapter)
         dropdownMenu.setOnItemClickListener { parent, view, position, id ->
             viewModel.currentSelectParam = position
-            setMinMax(position)
+            setMinMax()
         }
 
         minEditText = root.findViewById(R.id.minEditText)
@@ -49,9 +49,9 @@ class SettingsFragment : Fragment() {
         return root
     }
 
-    private fun setMinMax(position: Int) {
+    private fun setMinMax() {
         viewModel.criticals.value?.let {
-            when (position){
+            when (viewModel.currentSelectParam){
                 0 -> viewModel.minMax = it.pressure
                 1 -> viewModel.minMax = it.humidity
                 2 -> viewModel.minMax = it.temperature_home
@@ -79,5 +79,6 @@ class SettingsFragment : Fragment() {
         minEditText.text?.clear()
         maxEditText.text?.clear()
         viewModel.updateParameters()
+        setMinMax()
     }
 }

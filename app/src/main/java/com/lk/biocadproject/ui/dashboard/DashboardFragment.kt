@@ -14,13 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.button.MaterialButton
 import com.lk.biocadproject.R
@@ -33,6 +34,7 @@ class DashboardFragment : Fragment() {
     private lateinit var endPeriod: TextView
     private lateinit var sendPeriodsButton: MaterialButton
     private lateinit var barChart: BarChart
+    private lateinit var lineChart: LineChart
 
     private lateinit var dashboardViewModel: DashboardViewModel
 
@@ -58,21 +60,61 @@ class DashboardFragment : Fragment() {
         setOnClickList()
 
         barChart = root.findViewById(R.id.param_barchart)
-        dashboardViewModel.dataForGraphic.observe(this, Observer {
+        dashboardViewModel.dataForBarChart.observe(this, Observer {
             if (it.isNotEmpty()){
-                prepareDataForGraphics()
-                showGraphics()
+                prepareDataForBarChart()
+                showBarChart()
+            }
+        })
+
+        lineChart = root.findViewById(R.id.param_linechart)
+        dashboardViewModel.dataForLineChart.observe(this, Observer {
+            if (it.isNotEmpty()){
+                prepareDataForLineChart()
+                showLineChart()
             }
         })
 
         return root
     }
 
-    private fun prepareDataForGraphics(){
+    private fun prepareDataForLineChart(){
+        dashboardViewModel.updateLineEntry()
+    }
+
+    private fun prepareDataForBarChart(){
         dashboardViewModel.updateBarEntry()
     }
 
-    private fun showGraphics(){
+    private fun showLineChart() {
+        val lineDataSet = LineDataSet(dashboardViewModel.dataLineEntry, "")
+        //context?.let {lineDataSet.color = getColor(it,R.color.colorPrimary50)}
+        val lineData = LineData(lineDataSet)
+        lineChart.data = lineData
+        lineChart.description.isEnabled=false
+        //lineChart.setOnChartValueSelectedListener(this)
+        val xAxisTemp: XAxis = lineChart.xAxis
+        lineChart.xAxis.axisMaximum =dashboardViewModel.dataLineEntry.size.toFloat()
+        var yAxisTemp: YAxis = lineChart.axisLeft
+        if (lineData.yMin > 0) {
+            yAxisTemp.axisMinimum = 0F
+            xAxisTemp.position = XAxis.XAxisPosition.BOTTOM
+        }
+        if (lineData.yMax < 0) {
+            yAxisTemp.axisMaximum = 0F
+            xAxisTemp.position = XAxis.XAxisPosition.TOP
+        }
+        yAxisTemp = lineChart.axisRight
+        yAxisTemp.isEnabled = false
+        //lineChart.xAxis.valueFormatter = MyXAxisFormatter(dateXAxisLabel)
+        xAxisTemp.labelRotationAngle=-75F
+        // Set the marker to the chart
+        //mvTemp.setChartView(lineChart)
+        //lineChart.setMarker(mvTemp)
+        lineChart.invalidate()
+    }
+    
+    private fun showBarChart(){
         val barDataSet = BarDataSet(dashboardViewModel.dataBarEntry, "" )
         //context?.let {barDataSet.color = getColor(it,R.color.colorPrimary50)}
         barDataSet.setDrawValues(true)
@@ -139,6 +181,9 @@ class DashboardFragment : Fragment() {
                         startPeriod.text!="Выберите дату" && endPeriod.text!="Выберите дату" &&
                     dashboardViewModel.currentSelectParam in 0..7) {
                 dashboardViewModel.getDataOfPeriod(startPeriod.text.toString(), endPeriod.text.toString())
+                dashboardViewModel.getAverageOfParameter()
+            } else {
+                return@setOnClickListener
             }
         }
     }
