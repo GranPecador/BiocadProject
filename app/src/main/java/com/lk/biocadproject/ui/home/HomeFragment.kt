@@ -72,15 +72,15 @@ class HomeFragment : Fragment() {
 
     fun updeteFiels(parameters:ParametersModel){
         parameters.let {
-            pressureTextVIew.text = "Давление: ${it.pressure} Па"
-            humidityTextVIew.text = "Влажность: ${it.humidity}%"
-            roomTemperatureTextVIew.text = "Температура помещения: ${it.roomTemperature}℃"
+            pressureTextVIew.text = "${it.pressure} Па"
+            humidityTextVIew.text = "${it.humidity}%"
+            roomTemperatureTextVIew.text = "${it.roomTemperature}℃"
             workingAreaTemperatureTextVIew.text =
-                "Температура рабочей зоны: ${it.workingAreaTemperature}℃"
-            levelPHTextVIew.text = "Уровень pH: ${it.levelPH} Ед."
-            weightTextView.text = "Масса: ${it.weight} кг"
-            fluidFlowTextVIew.text = "Расход жидкости: ${it.fluidFlow} л"
-            levelCO2TextVIew.text = "Уровень CO: ${it.levelCO2} PPM"
+                "${it.workingAreaTemperature}℃"
+            levelPHTextVIew.text = "${it.levelPH} Ед."
+            weightTextView.text = "${it.weight} кг"
+            fluidFlowTextVIew.text = "${it.fluidFlow} л"
+            levelCO2TextVIew.text = "${it.levelCO2} PPM"
         }
     }
 
@@ -91,7 +91,7 @@ class HomeFragment : Fragment() {
             var client = OkHttpClient().newBuilder()
                 .readTimeout(0, TimeUnit.MILLISECONDS)
                 .build()
-            var request = Request.Builder().url("ws://192.168.1.109:8080").build()
+            var request = Request.Builder().url("ws://192.168.1.106:8081").build()
             var webSocket = client.newWebSocket(request, this)
 
             Log.e("TAG", "nen")
@@ -105,7 +105,6 @@ class HomeFragment : Fragment() {
         override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
             super.onMessage(webSocket, text)
             webSocket.send("Hello, it's cheerful")
-            //Toast.makeText(context, "onMessage+${text}", Toast.LENGTH_LONG).show()
             Log.e("TAG", text)
             try {
                 val obj = JSONObject(text)

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,17 +62,22 @@ class DashboardFragment : Fragment() {
 
         barChart = root.findViewById(R.id.param_barchart)
         dashboardViewModel.dataForBarChart.observe(this, Observer {
+            Log.e("ViewModel", "dataForBarChart")
             if (it.isNotEmpty()){
                 prepareDataForBarChart()
                 showBarChart()
+                Log.e("ViewModel", "dataForBarChart")
+
             }
         })
 
         lineChart = root.findViewById(R.id.param_linechart)
         dashboardViewModel.dataForLineChart.observe(this, Observer {
             if (it.isNotEmpty()){
+                Log.e("ViewModel", "dataForLineChart")
                 prepareDataForLineChart()
                 showLineChart()
+                Log.e("ViewModel", "dataForLineChart")
             }
         })
 

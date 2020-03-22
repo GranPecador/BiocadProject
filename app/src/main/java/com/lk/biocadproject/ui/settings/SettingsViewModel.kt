@@ -31,9 +31,8 @@ class SettingsViewModel : ViewModel() {
     val criticals : LiveData<ParametersMinMaxApi> = _criticals
 
     fun updateParameters() {
-        var params: ParametersMinMaxApi?
         CoroutineScope(Dispatchers.IO).launch {
-            params = RetrofitClient.instance.getCriticals()
+            val params: ParametersMinMaxApi? = RetrofitClient.instance.getCriticals()
             withContext(Dispatchers.Main){
                 _criticals.value = params
             }
@@ -42,7 +41,8 @@ class SettingsViewModel : ViewModel() {
 
     fun changeParameters(min: Double, max:Double){
         CoroutineScope(Dispatchers.IO).launch {
-            RetrofitClient.instance.postNewParameter(ParameterCharacteristic( PARAMS_SERVER[currentSelectParam], min, max))
+            RetrofitClient.instance.postNewParameter(
+                ParameterCharacteristic( PARAMS_SERVER[currentSelectParam], min, max, "mobile"))
         }
     }
 }

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.lifecycle.Observer
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -37,7 +38,9 @@ class SettingsFragment : Fragment() {
             viewModel.currentSelectParam = position
             setMinMax()
         }
-
+        viewModel.criticals.observe(this, Observer{
+            setMinMax()
+        })
         minEditText = root.findViewById(R.id.minEditText)
         maxEditText = root.findViewById(R.id.maxEditText)
 
