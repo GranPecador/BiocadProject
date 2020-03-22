@@ -19,13 +19,16 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.button.MaterialButton
 import com.lk.biocadproject.R
+import com.lk.biocadproject.api.MinMaxAverageModelApi
+import com.lk.biocadproject.api.RetrofitClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DashboardFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -62,34 +65,15 @@ class DashboardFragment : Fragment() {
 
         barChart = root.findViewById(R.id.param_barchart)
         dashboardViewModel.dataForBarChart.observe(this, Observer {
-            Log.e("ViewModel", "dataForBarChart")
-            if (it.isNotEmpty()){
-                prepareDataForBarChart()
-                showBarChart()
-                Log.e("ViewModel", "dataForBarChart")
-
-            }
+            updateBarEntry()
         })
 
         lineChart = root.findViewById(R.id.param_linechart)
         dashboardViewModel.dataForLineChart.observe(this, Observer {
-            if (it.isNotEmpty()){
-                Log.e("ViewModel", "dataForLineChart")
-                prepareDataForLineChart()
-                showLineChart()
-                Log.e("ViewModel", "dataForLineChart")
-            }
+            updateLineEntry()
         })
 
         return root
-    }
-
-    private fun prepareDataForLineChart(){
-        dashboardViewModel.updateLineEntry()
-    }
-
-    private fun prepareDataForBarChart(){
-        dashboardViewModel.updateBarEntry()
     }
 
     private fun showLineChart() {
@@ -186,8 +170,8 @@ class DashboardFragment : Fragment() {
             if (startPeriod.text!="ДД.ММ.ГГГГ" && endPeriod.text!="ДД.ММ.ГГГГ" &&
                         startPeriod.text!="Выберите дату" && endPeriod.text!="Выберите дату" &&
                     dashboardViewModel.currentSelectParam in 0..7) {
-                dashboardViewModel.getDataOfPeriod(startPeriod.text.toString(), endPeriod.text.toString())
-                dashboardViewModel.getAverageOfParameter()
+                getDataOfPeriod(startPeriod.text.toString(), endPeriod.text.toString())
+                getAverageOfParameter()
             } else {
                 return@setOnClickListener
             }
@@ -211,6 +195,59 @@ class DashboardFragment : Fragment() {
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction(uri: Uri)
         fun onCreateDatePicker(listener:DatePickerDialog.OnDateSetListener)
+    }
+
+    fun updateBarEntry(){
+        dashboardViewModel.dataBarEntry.clear()
+        var i = 0
+        dashboardViewModel.dataForBarChart.value?.forEach {
+            dashboardViewModel.dataBarEntry.add(BarEntry(i.toFloat(), it.toFloat()))
+            i++
+        }
+        showBarChart()
+    }
+
+    fun updateLineEntry(){
+        dashboardViewModel.dataLineEntry.clear()
+        var i = 0
+        dashboardViewModel.dataForLineChart.value?.forEach {
+            dashboardViewModel.dataLineEntry.add(Entry(i.toFloat(), it.toFloat()))
+            i++
+        }
+        showLineChart()
+    }
+
+    fun getDataOfPeriod(dateStart:String, dateEnd:String){
+        CoroutineScope(Dispatchers.IO).launch {
+            val minMaxAvarage: MinMaxAverageModelApi =
+                RetrofitClient.instance.getMinMaxAvarage(dashboardViewModel.PARAMS_SERVER[dashboardViewModel.currentSelectParam],
+                    dateStart, dateEnd)
+            withContext(Dispatchers.Main){
+                dashboardViewModel.dataForBarChart.value?.let{
+                    it.clear()
+                    it.add(minMaxAvarage.min)
+                    it.add(minMaxAvarage.avg)
+                    it.add(minMaxAvarage.max)
+                    Log.e("dashVM", "${it[0]} ${it[1]} ${it[2]}")
+                }
+                updateBarEntry()
+            }
+        }
+    }
+
+    fun getAverageOfParameter(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val averageList =
+                RetrofitClient.instance.getAvarage(dashboardViewModel.PARAMS_SERVER[dashboardViewModel.currentSelectParam], "today")
+            withContext(Dispatchers.Main){
+                dashboardViewModel.dataForLineChart.value?.let{
+                    it.clear()
+                    it.addAll(averageList.list)
+                }
+                updateLineEntry()
+
+            }
+        }
     }
 
     class MyXAxisFormatter(val list :List<String>): ValueFormatter(){

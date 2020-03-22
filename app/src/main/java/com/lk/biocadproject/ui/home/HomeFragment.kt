@@ -14,12 +14,10 @@ import com.lk.biocadproject.R
 import com.lk.biocadproject.models.ParametersModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocketListener
+import okhttp3.*
 import org.json.JSONObject
 import java.security.Policy
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
@@ -35,6 +33,9 @@ class HomeFragment : Fragment() {
     private lateinit var levelCO2TextVIew: TextView
 
     private lateinit var homeViewModel: HomeViewModel
+
+    private var executor = Executors.newCachedThreadPool()
+    private lateinit var listener: HomeFragment.SocketListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,35 +67,35 @@ class HomeFragment : Fragment() {
             updeteFiels(it)
         })
 
-        SocketListener(this, homeViewModel).run()
+        listener = SocketListener(this, homeViewModel)
+        executor.submit(listener)
         return root
     }
 
     fun updeteFiels(parameters:ParametersModel){
         parameters.let {
-            pressureTextVIew.text = "${it.pressure} Па"
-            humidityTextVIew.text = "${it.humidity}%"
-            roomTemperatureTextVIew.text = "${it.roomTemperature}℃"
+            pressureTextVIew.text = "${it.pressure}"
+            humidityTextVIew.text = "${it.humidity}"
+            roomTemperatureTextVIew.text = "${it.roomTemperature}"
             workingAreaTemperatureTextVIew.text =
-                "${it.workingAreaTemperature}℃"
-            levelPHTextVIew.text = "${it.levelPH} Ед."
-            weightTextView.text = "${it.weight} кг"
-            fluidFlowTextVIew.text = "${it.fluidFlow} л"
-            levelCO2TextVIew.text = "${it.levelCO2} PPM"
+                "${it.workingAreaTemperature}"
+            levelPHTextVIew.text = "${it.levelPH}"
+            weightTextView.text = "${it.weight}"
+            fluidFlowTextVIew.text = "${it.fluidFlow}"
+            levelCO2TextVIew.text = "${it.levelCO2}"
         }
     }
 
     class SocketListener(val fragment: HomeFragment, val viewModel: HomeViewModel) : WebSocketListener(), Runnable {
 
+        lateinit var webSocket:WebSocket
+
         override fun run() {
-            Log.e("TAG", "nen")
             var client = OkHttpClient().newBuilder()
                 .readTimeout(0, TimeUnit.MILLISECONDS)
                 .build()
             var request = Request.Builder().url("ws://192.168.1.106:8081").build()
-            var webSocket = client.newWebSocket(request, this)
-
-            Log.e("TAG", "nen")
+            webSocket = client.newWebSocket(request, this)
         }
 
         override fun onOpen(webSocket: okhttp3.WebSocket, response: Response) {
@@ -104,10 +105,10 @@ class HomeFragment : Fragment() {
 
         override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            Log.e("TAG", text)
+            //Log.e("TAG", text)
             try {
                 val obj = JSONObject(text)
-                Log.d("My App", obj.toString())
+                //Log.d("My App", obj.toString())
                 viewModel.parameters.value?.let {
                     it.pressure = obj.getDouble("PRESSURE")
                     it.humidity = obj.getDouble("HUMIDITY")
@@ -141,10 +142,14 @@ class HomeFragment : Fragment() {
             super.onFailure(webSocket, t, response)
             Log.e("onFailure", t.message)
         }
+
+        
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
+        if (!executor.isShutdown){
+            executor.shutdown()
+        }
     }
 }

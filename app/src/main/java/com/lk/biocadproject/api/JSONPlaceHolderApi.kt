@@ -22,4 +22,7 @@ interface JSONPlaceHolderApi {
     @GET("/hourly")
     suspend fun getAvarage(@Query("param") name:String,
                            @Query("dateStart") dateStart:String): ParamListAvarageModelApi
+
+    @GET("/errors")
+    suspend fun getMistakes() : ErrorsModelApi
 }

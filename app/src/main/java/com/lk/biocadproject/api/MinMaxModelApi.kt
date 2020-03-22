@@ -2,5 +2,5 @@ package com.lk.biocadproject.api
 
 import com.google.gson.annotations.SerializedName
 
-data class MinMaxModelApi(@SerializedName("min") val min: Double,
-                          @SerializedName("max") val max: Double)
+data class MinMaxModelApi(@SerializedName("min") var min: Double,
+                          @SerializedName("max") var max: Double)

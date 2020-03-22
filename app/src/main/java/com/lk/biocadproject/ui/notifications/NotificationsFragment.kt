@@ -8,10 +8,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lk.biocadproject.R
 
 class NotificationsFragment : Fragment() {
 
+    private lateinit var mRecyclerView: RecyclerView
     private lateinit var notificationsViewModel: NotificationsViewModel
 
     override fun onCreateView(
@@ -26,6 +29,15 @@ class NotificationsFragment : Fragment() {
         notificationsViewModel.text.observe(this, Observer {
             textView.text = it
         })
+        mRecyclerView = root.findViewById(R.id.recycler_mistakes)
+
+        with(mRecyclerView) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = notificationsViewModel.adapter
+        }
+        if (notificationsViewModel.adapter.itemCount == 0) {
+            notificationsViewModel.getMistakes()
+        }
         return root
     }
 }

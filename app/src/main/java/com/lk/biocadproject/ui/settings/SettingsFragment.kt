@@ -27,7 +27,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        viewModel.updateParameters()
+        //viewModel.updateParameters()
 
         val root = inflater.inflate(R.layout.fragment_settings, container, false)
 
@@ -73,15 +73,18 @@ class SettingsFragment : Fragment() {
         var minNum:Double = viewModel.minMax.min
         if(!minEditText.text.isNullOrEmpty()){
             minNum = minEditText.text.toString().toDouble()
+            viewModel.minMax.min = minNum
         }
         var maxNum:Double = viewModel.minMax.max
         if (!maxEditText.text.isNullOrEmpty()){
             maxNum = maxEditText.text.toString().toDouble()
+            viewModel.minMax.max = maxNum
+
         }
         viewModel.changeParameters(minNum, maxNum)
         minEditText.text?.clear()
         maxEditText.text?.clear()
-        viewModel.updateParameters()
+        //viewModel.updateParameters()
         setMinMax()
     }
 }

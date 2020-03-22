@@ -1,5 +1,6 @@
 package com.lk.biocadproject.ui.dashboard
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,55 +39,11 @@ class DashboardViewModel : ViewModel() {
     }
     val dataForLineChart: LiveData<MutableList<Double>> = _dataForLineChart
 
-    fun getDataOfPeriod(dateStart:String, dateEnd:String){
-        CoroutineScope(Dispatchers.IO).launch {
-            val minMaxAvarage:MinMaxAverageModelApi =
-                RetrofitClient.instance.getMinMaxAvarage(PARAMS_SERVER[currentSelectParam],
-                dateStart, dateEnd)
-            withContext(Dispatchers.Main){
-                dataForBarChart.value?.let{
-                    it.clear()
-                    it.add(minMaxAvarage.min)
-                    it.add(minMaxAvarage.avg)
-                    it.add(minMaxAvarage.max)
-                }
-            }
-        }
-    }
 
-    fun getAverageOfParameter(){
-        CoroutineScope(Dispatchers.IO).launch {
-            val averageList =
-                RetrofitClient.instance.getAvarage(PARAMS_SERVER[currentSelectParam], "today")
-            withContext(Dispatchers.Main){
-                dataForLineChart.value?.let{
-                    it.clear()
-                    it.addAll(averageList.list)
-                }
-            }
-        }
-    }
 
     val dataBarEntry: MutableList<BarEntry> = ArrayList()
     val dataLineEntry:MutableList<Entry> = ArrayList()
 
-    fun updateBarEntry(){
-        dataBarEntry.clear()
-        var i = 0
-        dataForBarChart.value?.forEach {
-            dataBarEntry.add(BarEntry(i.toFloat(), it.toFloat()))
-            i++
-        }
-    }
-
-    fun updateLineEntry(){
-        dataLineEntry.clear()
-        var i = 0
-        dataForLineChart.value?.forEach {
-            dataLineEntry.add(Entry(i.toFloat(), it.toFloat()))
-            i++
-        }
-    }
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"
