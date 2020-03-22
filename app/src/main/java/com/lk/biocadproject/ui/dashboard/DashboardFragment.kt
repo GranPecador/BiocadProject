@@ -122,10 +122,14 @@ class DashboardFragment : Fragment() {
     }
 
     var onDateSetListener = DatePickerDialog.OnDateSetListener{ view, year, monthOfYear, dayOfMonth ->
+        var monthStr = (monthOfYear+1).toString()
+        if (monthOfYear<9) {
+            monthStr = "0$monthStr"
+        }
         if (flagPeriod == 1)
-            startPeriod.text = "$dayOfMonth.${monthOfYear+1}.$year"
+            startPeriod.text = "$year-${monthStr}-$dayOfMonth"
         else if (flagPeriod ==2)
-            endPeriod.text = "$dayOfMonth.${monthOfYear+1}.$year"
+            endPeriod.text = "$year-${monthStr}-$dayOfMonth"
         flagPeriod=0
     }
 

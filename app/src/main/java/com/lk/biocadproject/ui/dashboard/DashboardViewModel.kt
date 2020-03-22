@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.BarEntry
 import com.lk.biocadproject.api.DataPairModelApi
+import com.lk.biocadproject.api.MinMaxAverageModelApi
 import com.lk.biocadproject.api.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DashboardViewModel : ViewModel() {
 
@@ -30,7 +32,17 @@ class DashboardViewModel : ViewModel() {
 
     fun getDataOfPeriod(dateStart:String, dateEnd:String){
         CoroutineScope(Dispatchers.IO).launch {
-            RetrofitClient.instance.getDataPeriod(PARAMS_SERVER[currentSelectParam], dateStart, dateEnd)
+            var minMaxAvarage:MinMaxAverageModelApi = RetrofitClient.instance.getMinMaxAvarage(PARAMS_SERVER[currentSelectParam],
+                dateStart, dateEnd,
+                "00:00:00", "00:00:00")
+            withContext(Dispatchers.Main){
+                dataForGraphic.value?.let{
+                    it.clear()
+                    it.add(minMaxAvarage.min)
+                    it.add(minMaxAvarage.avg)
+                    it.add(minMaxAvarage.max)
+                }
+            }
         }
     }
 
