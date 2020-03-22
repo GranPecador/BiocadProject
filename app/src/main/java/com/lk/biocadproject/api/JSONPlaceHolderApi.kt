@@ -17,5 +17,5 @@ interface JSONPlaceHolderApi {
     @GET("/period")
     suspend fun getDataPeriod(@Query("paramName") name:String,
                               @Query("dateStart") start:String,
-                              @Query("dateEnd") end:String)
+                              @Query("dateEnd") end:String): DatasOfPeriodListModelApi
 }

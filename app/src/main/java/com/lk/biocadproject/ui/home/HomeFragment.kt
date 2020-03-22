@@ -8,19 +8,38 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.lk.biocadproject.R
-import com.neovisionaries.ws.client.*
-import kotlinx.coroutines.CoroutineScope
+import com.lk.biocadproject.models.ParametersModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.IOException
-import java.security.NoSuchAlgorithmException
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocketListener
+import org.json.JSONObject
+import java.security.Policy
+import java.util.concurrent.TimeUnit
 
 
 class HomeFragment : Fragment() {
 
+    private lateinit var pressureTextVIew: TextView
+    private lateinit var humidityTextVIew: TextView
+    private lateinit var roomTemperatureTextVIew: TextView
+    private lateinit var workingAreaTemperatureTextVIew:TextView
+    private lateinit var levelPHTextVIew: TextView
+    private lateinit var weightTextView: TextView
+    private lateinit var fluidFlowTextVIew: TextView
+    private lateinit var levelCO2TextVIew: TextView
+
     private lateinit var homeViewModel: HomeViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,15 +54,24 @@ class HomeFragment : Fragment() {
         homeViewModel.text.observe(this, Observer {
             textView.text = it
         })
-        val pressureTextVIew: TextView = root.findViewById(R.id.param_pressure)
-        val humidityTextVIew: TextView = root.findViewById(R.id.param_humidity)
-        val roomTemperatureTextVIew: TextView = root.findViewById(R.id.param_room_temp)
-        val workingAreaTemperatureTextVIew: TextView = root.findViewById(R.id.param_work_area_temp)
-        val levelPHTextVIew: TextView = root.findViewById(R.id.param_levelph)
-        val weightTextView: TextView = root.findViewById(R.id.param_weight)
-        val fluidFlowTextVIew: TextView = root.findViewById(R.id.param_fluid_flow)
-        val levelCO2TextVIew: TextView = root.findViewById(R.id.param_levelco2)
+        pressureTextVIew = root.findViewById(R.id.param_pressure)
+        humidityTextVIew = root.findViewById(R.id.param_humidity)
+        roomTemperatureTextVIew = root.findViewById(R.id.param_room_temp)
+        workingAreaTemperatureTextVIew = root.findViewById(R.id.param_work_area_temp)
+        levelPHTextVIew = root.findViewById(R.id.param_levelph)
+        weightTextView = root.findViewById(R.id.param_weight)
+        fluidFlowTextVIew = root.findViewById(R.id.param_fluid_flow)
+        levelCO2TextVIew = root.findViewById(R.id.param_levelco2)
         homeViewModel.parameters.observe(this, Observer {
+            updeteFiels(it)
+        })
+
+        SocketListener(this, homeViewModel).run()
+        return root
+    }
+
+    fun updeteFiels(parameters:ParametersModel){
+        parameters.let {
             pressureTextVIew.text = "Давление: ${it.pressure} Па"
             humidityTextVIew.text = "Влажность: ${it.humidity}%"
             roomTemperatureTextVIew.text = "Температура помещения: ${it.roomTemperature}℃"
@@ -53,77 +81,71 @@ class HomeFragment : Fragment() {
             weightTextView.text = "Масса: ${it.weight} кг"
             fluidFlowTextVIew.text = "Расход жидкости: ${it.fluidFlow} л"
             levelCO2TextVIew.text = "Уровень CO: ${it.levelCO2} PPM"
-        })
-        getParams()
-        return root
+        }
     }
 
-    private fun getParams() {
-        // Create a WebSocket factory and set 5000 milliseconds as a timeout
-// value for socket connection.
-        CoroutineScope(Dispatchers.IO).launch {
+    class SocketListener(val fragment: HomeFragment, val viewModel: HomeViewModel) : WebSocketListener(), Runnable {
+
+        override fun run() {
+            Log.e("TAG", "nen")
+            var client = OkHttpClient().newBuilder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build()
+            var request = Request.Builder().url("ws://192.168.1.109:8080").build()
+            var webSocket = client.newWebSocket(request, this)
+
+            Log.e("TAG", "nen")
+        }
+
+        override fun onOpen(webSocket: okhttp3.WebSocket, response: Response) {
+            super.onOpen(webSocket, response)
+            Log.e("TAG", "onOpen")
+        }
+
+        override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
+            super.onMessage(webSocket, text)
+            webSocket.send("Hello, it's cheerful")
+            //Toast.makeText(context, "onMessage+${text}", Toast.LENGTH_LONG).show()
+            Log.e("TAG", text)
             try {
-                var factory = WebSocketFactory().setConnectionTimeout(5000)
-
-                // Create a WebSocket. The timeout value set above is used.
-                var ws: WebSocket = factory.createSocket("ws://192.168.1.109:8080/")
-                ws.addListener(object : WebSocketAdapter() {
-                    override fun onConnected(
-                        websocket: WebSocket?,
-                        headers: MutableMap<String, MutableList<String>>?
-                    ) {
-                        super.onConnected(websocket, headers)
-                        Log.e("Websocket", "onConnected on Socket")
-                    }
-
-                    override fun onTextMessage(websocket: WebSocket?, text: String?) {
-                        super.onTextMessage(websocket, text)
-                        Log.e("Websocket", text)
-                    }
-
-                    override fun onError(websocket: WebSocket?, cause: WebSocketException?) {
-                        super.onError(websocket, cause)
-                        Log.e("Websocket", cause?.message)
-                    }
-
-                    override fun onDisconnected(
-                        websocket: WebSocket?,
-                        serverCloseFrame: WebSocketFrame?,
-                        clientCloseFrame: WebSocketFrame?,
-                        closedByServer: Boolean
-                    ) {
-                        super.onDisconnected(
-                            websocket,
-                            serverCloseFrame,
-                            clientCloseFrame,
-                            closedByServer
-                        )
-                        Log.i("Websocket", "onDisconnected")
-                    }
-
-                    override fun onUnexpectedError(
-                        websocket: WebSocket?,
-                        cause: WebSocketException?
-                    ) {
-                        super.onUnexpectedError(websocket, cause)
-                        Log.i("Websocket", cause?.message)
-                    }
-                })
-                try { // Connect to the server and perform an opening handshake.
-// This method blocks until the opening handshake is finished.
-                    ws.connect()
-                } catch (e: OpeningHandshakeException) { // A violation against the WebSocket protocol was detected
-// during the opening handshake.
-                } catch (e: HostnameUnverifiedException) { // The certificate of the peer does not match the expected hostname.
-                } catch (e: WebSocketException) { // Failed to establish a WebSocket connection.
+                val obj = JSONObject(text)
+                Log.d("My App", obj.toString())
+                viewModel.parameters.value?.let {
+                    it.pressure = obj.getDouble("PRESSURE")
+                    it.humidity = obj.getDouble("HUMIDITY")
+                    it.roomTemperature = obj.getDouble("TEMPHOME")
+                    it.workingAreaTemperature = obj.getDouble("TEMPWORK")
+                    it.levelPH = obj.getDouble("LEVELPH")
+                    it.weight = obj.getDouble("MASS")
+                    it.fluidFlow = obj.getDouble("WATER")
+                    it.levelCO2 = obj.getDouble("LEVELCO2")
+                    fragment.updeteFiels(it)
                 }
-            } catch (e: WebSocketException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
+            } catch (tx: Throwable) {
+                Log.e(
+                    "My App",
+                    "Could not parse malformed JSON: \"" + text.toString() + "\""
+                )
             }
         }
+
+        override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
+            super.onClosed(webSocket, code, reason)
+            Log.e("onClosed", reason)
+        }
+
+        override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
+            super.onClosing(webSocket, code, reason)
+            Log.e("onClosing", reason)
+        }
+
+        override fun onFailure(webSocket: okhttp3.WebSocket, t: Throwable, response: Response?) {
+            super.onFailure(webSocket, t, response)
+            Log.e("onFailure", t.message)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

@@ -14,10 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.button.MaterialButton
 import com.lk.biocadproject.R
 
@@ -42,7 +46,7 @@ class DashboardFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val adapter: ArrayAdapter<String> = ArrayAdapter(context!!, R.layout.dropdown_menu_popup_item,
             dashboardViewModel.PARAMETRES)
-        val dropdownMenu = root.findViewById<AutoCompleteTextView>(R.id.exposed_dropdown)
+        val dropdownMenu = root.findViewById<AutoCompleteTextView>(R.id.analytics_exposed_dropdown)
         dropdownMenu.setAdapter(adapter)
         dropdownMenu.setOnItemClickListener { parent, view, position, id ->
             dashboardViewModel.currentSelectParam = position
@@ -64,8 +68,12 @@ class DashboardFragment : Fragment() {
         return root
     }
 
+    private fun prepareDataForGraphics(){
+        dashboardViewModel.updateBarEntry()
+    }
+
     private fun showGraphics(){
-        val barDataSet = BarDataSet(dataPoint, "rssi, дБм")
+        val barDataSet = BarDataSet(dashboardViewModel.dataBarEntry, "" )
         //context?.let {barDataSet.color = getColor(it,R.color.colorPrimary50)}
         barDataSet.setDrawValues(true)
         val barData = BarData(barDataSet)
@@ -79,13 +87,13 @@ class DashboardFragment : Fragment() {
 
     private fun setXYAxisBarChart(barChart: BarChart, barData: BarData) {
         barChart.description.isEnabled=false
-        barChart.setOnChartValueSelectedListener(this)
+        //barChart.setOnChartValueSelectedListener(this)
         val xAxis: XAxis = barChart.xAxis
         var yAxis = barChart.axisLeft
         setYAxisMinMaxBarChart(barData, yAxis, xAxis)
         yAxis = barChart.axisRight
         yAxis.isEnabled = false
-        xAxis.axisMaximum = size.toFloat()
+        xAxis.axisMaximum = dashboardViewModel.dataBarEntry.size.toFloat()
         xAxis.labelRotationAngle=-60F
         //barChart.xAxis.valueFormatter = MyXAxisFormatter(dateXAxisLabel)
     }
@@ -148,5 +156,12 @@ class DashboardFragment : Fragment() {
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction(uri: Uri)
         fun onCreateDatePicker(listener:DatePickerDialog.OnDateSetListener)
+    }
+
+    class MyXAxisFormatter(val list :List<String>): ValueFormatter(){
+        override fun getAxisLabel(value:Float,axis: AxisBase?):String{
+            //Log.e("AnaliticsAxis", list[value.toInt()] + value)
+            return list[value.toInt()]
+        }
     }
 }

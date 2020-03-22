@@ -23,28 +23,29 @@ class HomeViewModel : ViewModel() {
     private val _parameters= MutableLiveData<ParametersModel>().apply {
         if (this.value == null){
             this.value = ParametersModel(
-                0F,
-                0F,
-                0F,
-                0F,
-                0F,
-                0F,
-                0F,
-                0F
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
             )
         }
 //        this.value?.let {
-//            it.pressure = 0F
-//            it.humidity = 0F
-//            it.roomTemperature = 0F
-//            it.workingAreaTemperature = 0F
-//            it.levelPH = 0F
-//            it.fluidFlow = 0F
-//            it.levelCO2 = 0F
+//            it.pressure = 0.0
+//            it.humidity = 0.0
+//            it.roomTemperature = 0.0
+//            it.workingAreaTemperature = 0.0
+//            it.levelPH = 0.0
+//            it.fluidFlow = 0.0
+//            it.levelCO2 = 0.0
 //        }
 
     }
     val parameters: LiveData<ParametersModel> = _parameters
 
+    
 
 }

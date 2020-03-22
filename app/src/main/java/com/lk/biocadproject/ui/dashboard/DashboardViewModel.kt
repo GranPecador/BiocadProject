@@ -3,6 +3,7 @@ package com.lk.biocadproject.ui.dashboard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.github.mikephil.charting.data.BarEntry
 import com.lk.biocadproject.api.DataPairModelApi
 import com.lk.biocadproject.api.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
@@ -19,13 +20,13 @@ class DashboardViewModel : ViewModel() {
 
     var currentSelectParam:Int = -1
 
-    private val _dataForGraphic = MutableLiveData<MutableList<DataPairModelApi>>().apply {
+    private val _dataForGraphic = MutableLiveData<MutableList<Double>>().apply {
         value = ArrayList()
-        (value as ArrayList<DataPairModelApi>).add(DataPairModelApi("12.02.2020", 12.5))
-        (value as ArrayList<DataPairModelApi>).add(DataPairModelApi("13.02.2020", 22.5))
-        (value as ArrayList<DataPairModelApi>).add(DataPairModelApi("14.02.2020", 142.5))
+        (value as ArrayList<Double>).add(12.5)
+        (value as ArrayList<Double>).add(22.5)
+        (value as ArrayList<Double>).add(142.5)
     }
-    val dataForGraphic: LiveData<MutableList<DataPairModelApi>> = _dataForGraphic
+    val dataForGraphic: LiveData<MutableList<Double>> = _dataForGraphic
 
     fun getDataOfPeriod(dateStart:String, dateEnd:String){
         CoroutineScope(Dispatchers.IO).launch {
@@ -33,7 +34,15 @@ class DashboardViewModel : ViewModel() {
         }
     }
 
+    val dataBarEntry: MutableList<BarEntry> = ArrayList()
 
+    fun updateBarEntry(){
+        dataBarEntry.clear()
+        var i = 0F
+        dataForGraphic.value?.forEach {
+            dataBarEntry.add(BarEntry(i++, it.toFloat()))
+        }
+    }
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"
